@@ -49,15 +49,20 @@ try:
     con1 = fdb.connect(host=db_config['host'], database=db_config['database'], \
                    user=db_config['user'], password=db_config['password'], charset='UTF8')
 
-    report_indices = con1.cursor()
-    report_indices.execute(report_indices_sql)
-    
-    for(record) in report_indices:
-        report_index_file = record[0].strip()
-        report_index_type = record[1].strip()
-        rep_file_name = report_file_name(date_to_check, report_index_file, report_index_type)
-        print(record[0] + " " + record[1] + " " + rep_file_name + " " + report_file_exists(rep_file_name))
+    df_index = pd.read_sql(report_indices_sql, con1)
+    df_index = df_index.sort_values(by=['CODE_SP', 'MNEMO']) # sort by index code
+    df_index['FILE_NAME'] = ""
+    df_index['FILE_EXISTS'] = ""
 
+    for index, row in df_index.iterrows():
+        report_index_file = row['CODE_SP'].strip()
+        report_index_type = row['MNEMO'].strip()
+        rep_file_name = report_file_name(date_to_check, report_index_file, report_index_type)
+        df_index.loc[index, 'FILE_NAME'] = rep_file_name
+        df_index.loc[index, 'FILE_EXISTS'] = report_file_exists(rep_file_name)
+        # can't source assigned values because iterrows operates on a copy of DF
+        print(row['CODE_SP'] + " " + row['MNEMO'] + " " + rep_file_name + " " + report_file_exists(rep_file_name))
+        
 except Exception as error:
     print("Can't open " + db_config['database'] + " database at " + db_config['host'])
     print('Error message: {}'.format(error))
