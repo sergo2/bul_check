@@ -36,10 +36,13 @@ def report_file_name(date, index_code, report_index_type):
 def report_file_exists(file_name):
     full_file_name = path_to_report_files + file_name
     if os.path.isfile(full_file_name):
-        report_file_exists = "Exists"
+        if os.path.getsize(full_file_name) > 0:
+            result = "Exists"
+        else:
+            result = "Exists but empty"
     else:
-        report_file_exists = "Doesn't exist"
-    return report_file_exists
+        result = "Doesn't exist"
+    return result
 
 try:
     print("Checking against " + db_config['database'] + " database at " + db_config['host'])
@@ -50,11 +53,13 @@ try:
     report_indices.execute(report_indices_sql)
     
     for(record) in report_indices:
+        report_index_file = record[0].strip()
         report_index_type = record[1].strip()
-        rep_file_name = report_file_name(date_to_check, record[0], report_index_type)
-        print(record[0] + " " + report_index_type + " " + rep_file_name + " " + report_file_exists(rep_file_name))
+        rep_file_name = report_file_name(date_to_check, report_index_file, report_index_type)
+        print(record[0] + " " + record[1] + " " + rep_file_name + " " + report_file_exists(rep_file_name))
+
 except Exception as error:
     print("Can't open " + db_config['database'] + " database at " + db_config['host'])
     print('Error message: {}'.format(error))
-
-con1.close
+    
+con1.close()
