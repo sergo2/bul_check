@@ -10,8 +10,8 @@ log_file_name = path_to_reports + "check_" + date_to_check + ".log"
 
 db_config =  \
    { \
-     'host': "172.27.134.12", \
-     'database': "/var/db/mics.fdb", \
+     'host': "172.27.134.14", \
+     'database': "/var/db/mics_bul.fdb", \
      'user': "mics", \
      'password': "mics", \
    } 
