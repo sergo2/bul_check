@@ -7,10 +7,11 @@ Created on Tue Aug 14 10:03:06 2018
 
 class BulTest(object):
     is_active = True
-    def __init__(self, file_type, index_code, field):
+    def __init__(self, file_type, index_code, file_field_val, source_field_val):
         self.file_type = file_type
         self.index_code = index_code
-        self.field = field
+        self.file_field_val = file_field_val
+        self.source_field_val = source_field_val
         
     def check(self):
         
